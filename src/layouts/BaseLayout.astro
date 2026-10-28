@@ -1,0 +1,85 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppLink from '../components/WhatsAppLink.astro';
+import MobileContactBar from '../components/MobileContactBar.astro';
+import TemplateScripts from '../components/TemplateScripts.astro';
+import { site } from '../data/site';
+import '../styles/theme.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+  lang?: string;
+  home?: boolean;
+}
+const {
+  title = site.description,
+  description = site.description,
+  bodyClass = 'color-secondary',
+  lang = 'es',
+  home = false,
+} = Astro.props;
+const dark = bodyClass.split(' ').includes('bg-dark');
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+<link href="/assets/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="/assets/css/font-awesome.min.css" rel="stylesheet"/>
+<link href="/assets/css/adixa-icons.css" rel="stylesheet"/>
+<link href="/assets/css/magnific-popup.css" rel="stylesheet"/>
+<link href="/assets/css/swiper-bundle.min.css" rel="stylesheet"/>
+<link href="/assets/css/animate.min.css" rel="stylesheet"/>
+<link href="/assets/css/validnavs.css" rel="stylesheet"/>
+<link href="/assets/css/helper.css" rel="stylesheet"/>
+<link href="/assets/css/unit-test.css" rel="stylesheet"/>
+<link href="/assets/css/style.css" rel="stylesheet"/>
+<link href="/style.css" rel="stylesheet"/>
+  </head>
+  <body class={bodyClass}>
+
+<!-- Scroll To Top 
+    ============================================= -->
+<div class="scrollToTop">
+<div class="arrowUp">
+<i class="fas fa-arrow-up"></i>
+</div>
+<div class="water"></div>
+</div>
+<!-- End Scroll To Top  -->
+<!-- Start Preloader 
+    ============================================= -->
+<div id="preloader">
+<div class="rynox-loader-inner">
+<div class="rynox-loader">
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+<span class="rynox-loader-item"></span>
+</div>
+</div>
+</div>
+<!-- preloader end -->
+<!-- Header 
+    ============================================= -->
+
+    <Header home={home} dark={dark} />
+    <slot />
+    <Footer home={home} dark={dark} />
+    <WhatsAppLink />
+    <MobileContactBar />
+    <TemplateScripts />
+  </body>
+</html>

@@ -1,0 +1,199 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import { projects, featuredProjects } from '../data/projects';
+
+const orderedProjects = [...featuredProjects, ...projects.filter((project) => !project.featured)];
+---
+<div class="project-scroll-showcase" data-project-showcase>
+  <div class="project-scroll-window" data-project-window tabindex="0" role="region" aria-label="Proyectos de Conectamos">
+    <div class="project-scroll-track" data-project-track>
+      {orderedProjects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .project-scroll-window {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: var(--color-secondary) var(--bg-gray);
+    scrollbar-width: thin;
+  }
+
+  .project-scroll-window:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+  }
+
+  .project-scroll-track {
+    position: relative;
+    display: flex;
+    gap: 24px;
+    padding-bottom: 12px;
+  }
+
+  .project-scroll-track > :global(.case-study-item) {
+    flex: 0 0 calc((100% - 48px) / 3);
+    scroll-snap-align: start;
+  }
+
+  .project-scroll-track :global(.case-study .thumb) {
+    aspect-ratio: 16 / 7;
+  }
+
+  .project-scroll-track :global(.case-study .info) {
+    padding: 20px;
+  }
+
+  .project-scroll-track :global(.case-study .info h2) {
+    min-height: 2.5em;
+    margin-bottom: 12px;
+    font-size: 23px;
+    line-height: 1.25;
+  }
+
+  .project-scroll-track :global(.case-study .info .case-study-summary) {
+    display: -webkit-box;
+    min-height: 4.8em;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .project-scroll-track :global(.case-study .info .project-link) {
+    min-height: 42px;
+    margin-top: 16px;
+    padding: 9px 18px;
+  }
+
+  .is-scroll-driven .project-scroll-window {
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+
+  .is-scroll-driven .project-scroll-track {
+    will-change: transform;
+  }
+
+  @media (max-height: 750px) and (min-width: 1200px) {
+    .project-scroll-track :global(.case-study .thumb) {
+      aspect-ratio: 16 / 6;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .project-scroll-track > :global(.case-study-item) {
+      flex-basis: calc((100% - 24px) / 2);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .project-scroll-track > :global(.case-study-item) {
+      flex-basis: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-scroll-window {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  interface ScrollControl {
+    start: number;
+    end: number;
+    update(): void;
+    getTween(): { progress(value: number): void } | undefined;
+  }
+  interface Animation {
+    scrollTrigger?: ScrollControl;
+    progress(value: number): Animation;
+  }
+  interface GsapRuntime {
+    registerPlugin(plugin: unknown): void;
+    getProperty(target: HTMLElement, property: string): number | string;
+    to(target: HTMLElement, options: Record<string, unknown>): Animation;
+    matchMedia(): {
+      add(query: string, setup: () => void | (() => void)): void;
+      revert(): void;
+    };
+  }
+
+  const initProjectShowcase = () => {
+    const runtime = window as typeof window & { gsap?: GsapRuntime; ScrollTrigger?: unknown };
+    const { gsap, ScrollTrigger } = runtime;
+    const showcase = document.querySelector<HTMLElement>('[data-project-showcase]');
+    const viewport = showcase?.querySelector<HTMLElement>('[data-project-window]');
+    const track = showcase?.querySelector<HTMLElement>('[data-project-track]');
+    if (!gsap || !ScrollTrigger || !showcase || !viewport || !track) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    const media = gsap.matchMedia();
+    media.add('(min-width: 1200px) and (min-height: 600px) and (prefers-reduced-motion: no-preference)', () => {
+      const headerOffset = () => (document.querySelector('header nav')?.getBoundingClientRect().height ?? 90) + 16;
+      // Keep native horizontal scrolling if the full row cannot fit below the navigation.
+      if (showcase.offsetHeight > window.innerHeight - headerOffset() - 16) return;
+      const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+      if (distance() <= 0) return;
+
+      showcase.classList.add('is-scroll-driven');
+      viewport.scrollLeft = 0;
+      const cards = Array.from(track.querySelectorAll<HTMLElement>('.case-study-item'));
+      const animation = gsap.to(track, {
+        x: () => -distance(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: showcase,
+          pin: showcase,
+          start: () => `top ${headerOffset()}px`,
+          end: () => `+=${Math.max(distance(), window.innerHeight * 2)}`,
+          scrub: 0.6,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          snap: {
+            snapTo: 1 / (cards.length - 3),
+            duration: { min: 0.15, max: 0.3 },
+            delay: 0.15,
+            ease: 'power1.inOut',
+          },
+        },
+      });
+
+      // A keyboard user can reach every project; focused links must remain visible.
+      const revealFocusedCard = (event: FocusEvent) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const card = target.closest<HTMLElement>('.case-study-item');
+        const control = animation.scrollTrigger;
+        if (!card || !control) return;
+        viewport.scrollLeft = 0;
+        const offset = -Number(gsap.getProperty(track, 'x'));
+        const left = card.offsetLeft;
+        const right = left + card.offsetWidth;
+        const desired = left < offset ? left : right > offset + viewport.clientWidth ? right - viewport.clientWidth : offset;
+        if (Math.abs(desired - offset) < 2) return;
+        const progress = Math.max(0, Math.min(1, desired / distance()));
+        window.scrollTo({ top: control.start + progress * (control.end - control.start), behavior: 'instant' });
+        control.update();
+        control.getTween()?.progress(1);
+        animation.progress(progress);
+      };
+      viewport.addEventListener('focusin', revealFocusedCard);
+      return () => {
+        viewport.removeEventListener('focusin', revealFocusedCard);
+        showcase.classList.remove('is-scroll-driven');
+        viewport.scrollLeft = 0;
+      };
+    });
+    window.addEventListener('pagehide', () => media.revert(), { once: true });
+  };
+
+  // Legacy animation plugins are loaded after the page content by the shared layout.
+  if (document.readyState === 'complete') initProjectShowcase();
+  else window.addEventListener('load', initProjectShowcase, { once: true });
+</script>

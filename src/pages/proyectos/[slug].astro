@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { projects } from '../../data/projects';
+import type { Project } from '../../data/projects';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+---
+<BaseLayout title={`${project.title} | ${site.name}`} description={project.excerpt}>
+  <article class="project-detail default-padding bg-gray">
+    <div class="container">
+      <header class="project-detail-header">
+        <nav aria-label="breadcrumb">
+          <a href={site.projectsHref}>Proyectos</a>
+          <span aria-hidden="true"> / </span>
+          <span aria-current="page">{project.title}</span>
+        </nav>
+        <h1>{project.title}</h1>
+      </header>
+      <div class="project-detail-image">
+        <img src={project.image} alt={project.imageAlt} decoding="async" />
+      </div>
+      <div class="project-detail-copy">
+        {project.paragraphs.map((paragraph) => <p set:html={paragraph} />)}
+        {project.sourceLinks.length > 0 && (
+          <div class="project-detail-sources">
+            {project.sourceLinks.map((link) => <a class="btn-standard project-link" href={link.href}>{link.label}</a>)}
+          </div>
+        )}
+        <div class="project-detail-actions">
+          <a href={site.projectsHref}>Ver todos los proyectos</a>
+          <a class="btn-standard project-link" href={site.contactHref}>Quiero asesoría gratis</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

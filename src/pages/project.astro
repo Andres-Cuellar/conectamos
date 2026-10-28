@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
+import { site } from '../data/site';
+---
+<BaseLayout title={`Proyectos | ${site.name}`}>
+  <section class="portfolio-index case-studies default-padding bg-gray">
+    <div class="container">
+      <div class="site-heading">
+        <div class="sub-title">Casos de éxito</div>
+        <h1 class="title">Proyectos</h1>
+      </div>
+      <div class="portfolio-style-one-items">
+        <div class="case-study-grid">
+          {projects.map((project) => <ProjectCard project={project} showAnchor />)}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

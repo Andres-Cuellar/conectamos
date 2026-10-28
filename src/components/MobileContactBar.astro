@@ -1,0 +1,197 @@
+---
+import { site, socialLinks } from '../data/site';
+---
+<div class="mobile-contact-spacer" aria-hidden="true"></div>
+<nav class="mobile-contact-bar" aria-label="Contacto rápido">
+  <a class="mobile-contact-whatsapp" href={site.whatsapp.href} target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    <span>WhatsApp</span>
+  </a>
+  <details class="mobile-contact-options">
+    <summary>
+      <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+      <span>Otros</span>
+    </summary>
+    <div class="mobile-contact-panel">
+      <a href={`tel:${site.whatsapp.label}`}>
+        <i class="fas fa-phone-alt" aria-hidden="true"></i>
+        <span>Llamar</span>
+      </a>
+      <p>Redes sociales</p>
+      {socialLinks.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer">
+          <i class={`fab fa-${link.icon}`} aria-hidden="true"></i>
+          <span>{link.label}</span>
+        </a>
+      ))}
+    </div>
+  </details>
+</nav>
+
+<style>
+  .mobile-contact-bar,
+  .mobile-contact-spacer {
+    display: none;
+  }
+
+  @media (max-width: 991px) {
+    .mobile-contact-spacer {
+      display: block;
+      height: calc(69px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .mobile-contact-bar {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 1040;
+      display: grid;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid var(--bg-gray);
+      background: var(--white);
+      box-shadow: 0 -4px 20px rgb(0 0 0 / 6%);
+    }
+
+    .mobile-contact-whatsapp,
+    .mobile-contact-options summary {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 8px;
+      border-radius: 12px;
+      font-size: clamp(14px, 4vw, 16px);
+      font-weight: 700;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .mobile-contact-whatsapp,
+    .mobile-contact-whatsapp:hover,
+    .mobile-contact-whatsapp:visited {
+      background: var(--color-primary);
+      color: var(--white);
+    }
+
+    .mobile-contact-whatsapp i {
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+
+    .mobile-contact-bar span {
+      min-width: 0;
+      white-space: nowrap;
+      color: inherit;
+    }
+
+    .mobile-contact-options {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .mobile-contact-options summary {
+      list-style: none;
+      background: var(--color-secondary);
+      color: var(--color-heading);
+    }
+
+    .mobile-contact-options summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .mobile-contact-panel {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 16px);
+      width: min(300px, calc(100vw - 32px));
+      max-height: min(440px, calc(100dvh - 112px - env(safe-area-inset-bottom, 0px)));
+      overflow-y: auto;
+      padding: 12px;
+      border: 1px solid var(--bg-gray);
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: var(--box-shadow-regular);
+    }
+
+    .mobile-contact-panel a {
+      display: flex;
+      min-height: 46px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--color-heading);
+    }
+
+    .mobile-contact-panel a:hover {
+      background: var(--bg-gray);
+      color: var(--color-primary);
+    }
+
+    .mobile-contact-panel i {
+      width: 22px;
+      text-align: center;
+      color: var(--color-primary);
+    }
+
+    .mobile-contact-panel p {
+      margin: 8px 12px 4px;
+      padding-top: 12px;
+      border-top: 1px solid var(--bg-gray);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-paragraph);
+    }
+
+    .mobile-contact-bar a:focus-visible,
+    .mobile-contact-options summary:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('.mobile-contact-bar');
+  // Keep the fixed bar outside the wrapper injected by the template's navigation plugin.
+  const mountBar = () => {
+    if (bar && bar.parentElement !== document.body) document.body.append(bar);
+  };
+  if (document.readyState === 'complete') mountBar();
+  else window.addEventListener('load', mountBar, { once: true });
+
+  const options = document.querySelector<HTMLDetailsElement>('.mobile-contact-options');
+  const summary = options?.querySelector('summary');
+
+  if (options) {
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Node && !options.contains(event.target)) options.open = false;
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && options.open) {
+        options.open = false;
+        summary?.focus();
+      }
+    });
+    options.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+      options.open = false;
+    }));
+    options.addEventListener('focusout', (event) => {
+      if (event.relatedTarget instanceof Node && !options.contains(event.relatedTarget)) options.open = false;
+    });
+    window.matchMedia('(min-width: 992px)').addEventListener('change', (event) => {
+      if (event.matches) options.open = false;
+    });
+  }
+</script>
