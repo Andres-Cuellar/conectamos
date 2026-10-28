@@ -5,7 +5,7 @@ export const site = {
   description: 'Conectamos Growth Marketing: Más que una agencia, tu equipo de estrategia digital.',
   whatsapp: {
     label: '+573103091140',
-    href: 'https://wa.me/573103091140',
+    href: `https://wa.me/573103091140?text=${encodeURIComponent('Hola, quiero conocer más sobre sus servicios de marketing digital.')}`,
   },
   logos: {
     light: '/assets/img/logo.png',

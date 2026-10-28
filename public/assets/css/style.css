@@ -3113,6 +3113,7 @@ ul.fun-fact-style-three h2 {
 
 .case-studies .large-heading h1 span {
 	font-weight: 900;
+	margin-top: 0;
 }
 
 .case-studies .portfolio-style-one-items {
@@ -3184,6 +3185,15 @@ ul.fun-fact-style-three h2 {
 .case-study .info .project-link {
 	align-self: flex-start;
 	margin-top: 24px;
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: var(--white);
+}
+
+.case-study .info .project-link:hover {
+	background: var(--color-secondary);
+	border-color: var(--color-secondary);
+	color: var(--color-heading);
 }
 
 .case-study a:focus-visible {
@@ -3732,7 +3742,7 @@ ul.award-list.style-two li:after {
 }
 
 .color-secondary ul.award-list.style-two li:after {
-	background-color: #ffe0e2;
+	background-color: var(--color-secondary);
 }
 
 ul.award-list.style-two li:hover::after,
@@ -3820,16 +3830,22 @@ ul.award-list li.active h3 {
 
 .team-style-one-item .content .title-info span {
 	display: inline-block;
-	background: linear-gradient(45deg, var(--color-primary) 0%, #ebebeb 50%);
-	color: var(--color-heading);
+	background: var(--color-primary);
+	color: var(--white);
 	padding: 0 10px;
 	border-radius: 5px;
 	font-weight: 500;
+	transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .color-secondary .team-style-one-item .content .title-info span {
-	background: var(--dark);
+	background: var(--color-primary);
 	color: var(--white);
+}
+
+.team-style-one-item:hover .content .title-info span {
+	background: var(--color-secondary);
+	color: var(--color-heading);
 }
 
 .hover-reveal-item a {
@@ -5168,6 +5184,26 @@ a.btn-circle-border:hover {
 
 .side .widget.newsletter .btn-standard:hover,
 .bg-dark .side .widget.newsletter .btn-standard:hover {
+	background: var(--color-secondary);
+	border-color: var(--color-secondary);
+	color: var(--color-heading);
+}
+
+.nav-full-width .side .widget.address ul li p {
+	color: var(--color-primary);
+}
+
+.nav-full-width .side .widget.address ul li strong {
+	display: block;
+	padding-left: 12px;
+	border-left: 3px solid var(--color-secondary);
+}
+
+.nav-full-width .side .widget.newsletter h4 {
+	color: var(--color-primary);
+}
+
+.nav-full-width .side .widget.newsletter .btn-standard {
 	background: var(--color-primary);
 	border-color: var(--color-primary);
 	color: var(--white);
@@ -6223,6 +6259,19 @@ footer .f-item.link li a:hover {
 
 /* Mobile Layout: 320px. */
 @media only screen and (max-width: 767px) {
+
+	html,
+	body {
+		overflow-x: clip;
+	}
+
+	.nav-full-width .side {
+		width: 100%;
+	}
+
+	.nav-full-width .side.on {
+		right: 0;
+	}
 
 	/* Default CSS */
 	.title {
