@@ -1,7 +1,4 @@
-<div
-    class="contact-style-one-area default-padding"
-    id="contacto"
->
+<div class="contact-style-one-area default-padding" id="contacto">
     <div class="container">
         <div class="row">
             <div class="col-xl-5 contact-intro">
@@ -9,8 +6,10 @@
                     <div class="content">
                         <div class="sub-title">Déjanos tu contacto aquí</div>
                         <div class="title contact-intro-title">
-                            ¿Quieres saber si tu <strong>estrategia digital</strong>
-                            <strong>realmente está funcionando</strong>?
+                            ¿Quieres saber si tu <strong
+                                >estrategia digital
+                            </strong>
+                            <strong> realmente está funcionando</strong>?
                         </div>
                         <p>
                             Déjanos tus datos y te hacemos un diagnóstico
@@ -120,7 +119,8 @@
                                         >Diagnóstico gratis</option
                                     ><option value="asesoria"
                                         >Asesoría gratis</option
-                                    ></select>
+                                    ></select
+                                >
                             </div>
                         </div>
                     </div><div class="row">
@@ -208,21 +208,28 @@
 </style>
 
 <script>
-    const intro = document.querySelector<HTMLElement>('.contact-intro');
-    const nav = document.querySelector<HTMLElement>('header nav');
+    const intro = document.querySelector<HTMLElement>(".contact-intro");
+    const nav = document.querySelector<HTMLElement>("header nav");
 
     if (intro) {
         const updateStickyOffset = () => {
-            const headerOffset = (nav?.getBoundingClientRect().height ?? 86) + 24;
+            const headerOffset =
+                (nav?.getBoundingClientRect().height ?? 86) + 24;
             // A tall text block can scroll into view before sticking, without an inner scrollbar.
-            const availableOffset = window.innerHeight - intro.offsetHeight - 24;
-            intro.style.setProperty('--contact-sticky-top', `${Math.min(headerOffset, availableOffset)}px`);
+            const availableOffset =
+                window.innerHeight - intro.offsetHeight - 24;
+            intro.style.setProperty(
+                "--contact-sticky-top",
+                `${Math.min(headerOffset, availableOffset)}px`,
+            );
         };
 
         const observer = new ResizeObserver(updateStickyOffset);
         observer.observe(intro);
         if (nav) observer.observe(nav);
-        window.addEventListener('resize', updateStickyOffset, { passive: true });
+        window.addEventListener("resize", updateStickyOffset, {
+            passive: true,
+        });
         updateStickyOffset();
     }
 </script>
